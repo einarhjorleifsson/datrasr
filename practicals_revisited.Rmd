@@ -1,0 +1,273 @@
+---
+title: "ICES TRAWL SURVEY AND EVALUATION course"
+author: "Doug Beare and Dave Reid"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Practical 01 - Exploring the Chrons
+
+The aim of this exercise is download ICES exchange format data from www.ices.dk, extract and visualise the chron records.
+
+1. Install R (http://cran.r-project.org/), packages and perhaps Tinn-R   (http://sourceforge.net/projects/tinn-r/).
+
+Install the packages. Remember you only need to do this once.
+```{r, eval = FALSE}
+install.packages('maps')
+install.packages('maptools')
+install.packages('rgdal')
+install.packages('sp')
+install.packages('spatial')
+install.packages('PBSmapping')
+```
+
+Attach to search path:
+```{r, eval = FALSE}
+library(sp)
+library(maptools)
+library(rgdal)
+library(maps)
+library(PBSmapping)
+```
+
+2. Select some data from the ICES website - http://datras.ices.dk/Data_products/Download/Download_Data_public.aspx
+
+3. Save the data to a directory of your choice, eg. 'c:/datras/data' and extract them from the zip files.
+
+4. Install the R library datras. Do this by downloading datras*zip from the sharepoint. Open R, go to packages, install package from local zip files.
+
+5. Attach datras package written by me to the R search path
+
+```{r, message = FALSE}
+library(datrasR)
+```
+
+6. Extract the chron records in the relevant directory. In the first instance chose a survey area in which you are interested. The suggestions below are simply options. Remember that you will need to adjust the working directory (wd) path so that R can find the data. The ICES website only allows relatively small subsets of data to be downloaded at once. For the time-being stick to fairly small subsets of data.
+
+Addendum (einar) - do only once:
+```{r, eval = FALSE}
+download.file("http://www.hafro.is/~einarhj/data/Exchange_Data_2016-01-18_21_36_32.csv",
+              destfile = "Exchange Data_x.csv")
+```
+
+```{r}
+chrons <- parseExchangeFormatChrons(wd = "/home/einarhj/r/Pakkar/datrasr")
+```
+
+7. Here only examine valid hauls, non-duplicates and hauls where we have both shoot and haul positions.
+
+```{r}
+chrons <- chrons[chrons$haulval == 'V', ]        # only valid hauls
+chrons <- chrons[!duplicated(chrons), ]          # chuck any duplicates
+chrons <- chrons[!is.na(chrons$haullong), ]      # don't want data without haul longs
+chrons <- chrons[chrons$country != 'NOR', ]      # throw out Norway because shoot and haul positions are the same.
+```
+
+8. Print and examine first 5 lines of chron file 
+
+```{r}
+head (chrons)
+```
+
+9. Explore the data with R function table
+
+```{r}
+table(chrons$haulval)                                             # number of valid hauls (check)
+table(chrons$hauldur)                                             # number of hauls at different durations
+table(chrons$gear)                                                # number of gears
+table(chrons$quarter,chrons$year)                                 # number of hauls by year and quarter
+table(chrons$country,chrons$ship)                                 # number of hauls by country and ship
+head(table(chrons$depth, chrons$daynight))                        # number of hauls by day/night and depth                                   
+table(chrons$ship,cut(chrons$depth,breaks=c(seq(0,250,by=25))))   # number of hauls by ship and depth bin.
+head(table(chrons$statrec,as.character(chrons$ship)))             # number of hauls by statistical rectangle and ship
+table(chrons$year)                                                # number of hauls by year
+```
+
+10. Some simply summary statistics
+```{r}
+summary(chrons$depth)
+summary(chrons$hauldur)
+summary(chrons$datim.shot)
+```
+
+11. average temperature (if available) in each statrectangle (not run).
+```{r, eval = FALSE}
+tapply(chrons$surtemp,list(chrons$quarter, chrons$statrec), mean,na.rm=T)
+```
+
+12. average depth (if available) in each statrectangle (not run).
+```{r, eval = FALSE}
+tapply(chrons$depth, list(chrons$quarter, chrons$statrec), mean,na.rm=T)
+```
+
+13. average number, duration and distance of hauls in ICES area
+```{r}
+chrons$ices_area <- ICESarea(chrons, roman = FALSE)                               # Add on ICES area using function datras
+tapply(chrons$hauldur, chrons$ices_area, length)                                  # number of hauls in each ICES area
+round(tapply(chrons$hauldur, chrons$ices_area, sum,na.rm=T)/60)                   # total haul duration in each ICES area
+round(tapply(chrons$distance, chrons$ices_area, sum,na.rm=T)/1000)                # total distance hauled in each ICES area
+```
+
+14. You might want to write data out into a csv file for reading with excel or some other software (not run):
+```{r, eval = FALSE}
+write.table(chrons,file='chrons.csv',sep=',',row.names=F)
+```
+
+15. Explore the data with graphs
+
+Simple map of shoot and haul locations
+```{r, fig.width = 7.5, fig.height = 6.5}
+par(mfrow=c(1,1))
+plot(chrons$shootlong,chrons$shootlat,pch=".",col='blue',ylab='',xlab='',cex=2)
+# add points
+points(chrons$haullong,chrons$haullat,pch=".",col='red',cex=2)
+# add lines for stat rectangles
+abline(h=0:80,v=seq(-30,30,by=.5),lty=2,col='grey',lwd=.5)
+# add map
+library(maps)
+map('worldHires',add=T,col='darkseagreen',fill=T)   
+
+
+# Add depth contours (different files for different areas since the data sets are so big).
+
+# EINAR - DELIBERATELY EXCLUDED
+#data(nseaBathy)   # north sea bathymetry
+#data(nwestBathy)  # north west atlantic shelf bathymetry
+#data(balticBathy) # baltic sea bathymetry
+
+#contour(nseaBathy$x, nseaBathy$y, nseaBathy$z, levels=c(20,40,60,100), add=T)    # add on depth contours for north sea
+#contour(nwestBathy$x, nwestBathy$y, nwestBathy$z, levels=c(100,200,500), add=T)  # add on depth contours for baltic
+```
+
+16. Explore data in various ways looking for potential confounding
+```{r, fig.width = 7.5, fig.height = 6.5}
+what.quarter <- 3 # remember to add on the correct quarter you are examining
+
+chrons1 <- chrons[chrons$quarter == what.quarter,]
+par(mfrow=c(1,2),mar=c(4,4,2,2))
+plot(chrons1$shootlong,chrons1$shootlat,pch=16,col='blue',ylab='',xlab='')  # just shoot long
+# add lines for stat rectangles
+abline(h=0:80,v=seq(-30,30,by=.5),lty=2,col='grey')
+# add map
+library(maps)
+map('world',add=T,col='green',fill=T)   # low res map. Try 'worldHires' too.
+tt <- tapply(chrons1$depth,format(chrons1$datim.shot,"%H"),median,na.rm=T) # calculate mean depths at different times of day
+plot(as.numeric(names(tt)),tt,type='l',ylab="average depth",xlab="time of day")
+```
+
+Plot the survey by year
+
+```{r, fig.width = 7.5, fig.height = 6.5}
+chrons1 <- chrons[chrons$quarter == what.quarter,]  # extract data according to what.quarter
+
+uy <- sort(unique(chrons$year))
+#print(uy)
+#print(length(uy))                # how many unique years in the chron file ??
+par(mfrow=c(1,2),mar=c(2,2,2,2)) # use the result of print(length(uy)) to set up plot for number of graphs. Remember mfrow=c(3,4) means 'plot 12 graphs'
+
+
+for (i in uy) {
+  plot(chrons1$shootlong[chrons1$year == i],chrons1$shootlat[chrons1$year==i],pch=16,col='blue',ylab='',xlab='')
+  # add points
+  #points(jitter(chrons1$haullong),jitter(chrons1$haullat),pch=16,col='red')
+  # add lines for stat rectangles
+  abline(h = 0:80, v = seq(-30,30, by=.5), lty = 2, col = 'grey')
+  # add map
+  library(maps)
+  map('world', add=T, col='green', fill=T)   # low res map. Try 'worldHires' too.
+  title(as.character(i))
+}
+```
+
+Comment on the distribution of the survey stations 
+
+17. Find chrons within a polygon.  Note: The 'polygon' can also come from a shapefile.
+
+First create a data frame with the Round 3 Zone 5 Boundary Co-ordinates (a proposed area for an offshore wind farm).
+```{r, fig.width = 7.5, fig.height = 6.5}
+dat.r3 <- data.frame (
+lon.d = c(3,3,2,2,2,1,1,2,2,2),
+lon.m = c(4,10,27,6,8,52,55,13,14,2),
+lon.s = c(15.035,46.476,11.669,56.469,30.217,6.891,56.591,32.66,29.436,40.5),
+lat.d = c(53,52,51,52,52,52,52,52,52,52),
+lat.m = c(14,51,59,0,17,15,24,26,36,49),
+lat.s = c(46.991,46.076,49.19,33.467,25.312,57.710,7.55,12.405,1.973,33.309))
+
+# Convert to decimal lat and long co-ordinates 
+x <- ((dat.r3$lon.m*60) + dat.r3$lon.s)/ 3600
+dat.r3$lon <- dat.r3$lon.d + x
+y <- ((dat.r3$lat.m*60) + dat.r3$lat.s) / 3600
+dat.r3$lat <- dat.r3$lat.d + y
+
+# Create polyset data.frame (from PBSmapping but there are many other alternatives). 
+round.3  <- data.frame(PID = rep(1,11), POS = 1:11, X = c(dat.r3$lon,dat.r3$lon[1]), Y = c(dat.r3$lat,dat.r3$lat[1]))
+round.3  <- as.PolySet(round.3, projection='UTM')
+
+head(round.3) # examine data (typical method for storage of spatial data). 
+
+data(europa)  # map of europe (with a detailed Dutch coastline) included in the package datras
+
+par(mfrow=c(1,1))
+
+plotMap(europa, xlim = c(-1,5), ylim = c(50,54), col = 'darkgreen', xlab = '', ylab = '')
+addLines(round.3,lwd=2)
+addPolys(round.3,col='red')
+points(chrons$shootlong,chrons$shootlat,pch=".",cex=2)
+
+# Identify the points within the polygon
+
+events <- data.frame(EID=1:length(chrons[,1]),X=chrons$shootlong,Y=chrons$shootlat) # Must first creat an events data frame
+events <- as.EventData(events,projection="UTM")
+r3<-findPolys(events,round.3,maxRows=1e+06)
+
+print(r3) #examine the output
+
+points(chrons$shootlong[r3$EID],chrons$shootlat[r3$EID],col='blue',pch='*')   # plot points INSIDE the polygon
+points(chrons$shootlong[-r3$EID],chrons$shootlat[-r3$EID],col='black',pch='+')   # plot points OUTSIDE the polygon
+```
+
+18. Create and plot points and tow tracks using R library sp. Output the result as kml (Google Earth) and shapefiles.
+
+```{r, eval = FALSE}
+spDF <- Chrons2SpatialPointsDF(data=chrons) # Convert the data to a spatial points data.frame
+
+# Plot map in R
+data(europa) # in built map
+plotMap(europa,xlim=c(-15,10),ylim=c(47,62),xlab='',ylab='')  # Note: change xlim and ylim to focus in on correct area.
+points(spDF,pch=".",col='red',cex=2)
+```
+
+The magic of Google Earth. Note you can change the driver for other formats (not run):
+```{r, eval = FALSE}
+writeOGR(obj=spDF, dsn="chrons.kml", layer="shoot-locations", driver="KML") 
+writeOGR(obj=spDF, dsn="chrons.shp", layer="shoot-locations", driver="ESRI Shapefile")  # A shapefile.
+
+print(getwd())  # see which directory the file has gone too, find it and open it in Google Earth 
+```
+
+Similarly tow tracks instead of points
+```{r, fig.width = 7.5, fig.height = 6.5}
+uships <- unique(chrons$ship) # how many unique ships in the dataset ? 
+print(uships)
+spLDF <- ChronsTrack2SpatialLineDF(input=chrons,what.ship = c("TRI2"))   # convert to a spatial line data frame for a particular ship. Note the function takes too long if you select too many ships/data.
+par(mfrow=c(1,1))
+plotMap(europa,xlim=c(-5,10),ylim=c(47,62),xlab='',ylab='',col='darkseagreen')  #  Plot to see 
+lines(spLDF,col='blue',lwd=1)
+```
+
+(not run)
+```{r, eval = FALSE}
+writeOGR(spLDF, "towtracks.kml", "tracks", "KML") 
+print(getwd())  # see which directory the file has gone too, find it and open file towtracks.kml in Google Earth 
+```
+
+#  FURTHER EXERCISES
+
+* Explore chron files from different datasets downloaded from ICES website. 
+* Make your own polygons for selecting data.
+* Find examples of 'confounding'/non-random sampling in survey data and share them with the group at Plenary, eg. create maps with dots color-coded for different ships, gears, etc. 
+
