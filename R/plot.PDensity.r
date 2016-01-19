@@ -17,7 +17,7 @@ dd<-dim(fish.yr.l)
 fish.yr.l.h<-fish.yr.l[,,what.quarter]/matrix(rep(hd[,what.quarter],dd[2]),ncol=dd[2])      # get cpue
 
 for(i in sort(unique(fdat$year)) ){
-print(i)                                                                                    # loop over year
+#print(i)                                                                                    # loop over year
 input <- fish.yr.l.h[as.character(i),]
 input1 <- input[!is.na(input)]
 if(length(input1)>0){

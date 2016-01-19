@@ -79,7 +79,7 @@ if ( nrow(dF) > 0 )
 
     #overlay to find which grid cell that each VMS point is in
     #can take a long time, but does work eventually
-    gridCellIndexPerVMSpoint <- overlay( spatialGrid, sPDF )
+    gridCellIndexPerVMSpoint <- overlay(spatialGrid, sPDF )
     sPDF$gridCellIndex <- gridCellIndexPerVMSpoint
 
     #if there's a column of time intervals then sum them

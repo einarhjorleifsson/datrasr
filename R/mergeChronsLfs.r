@@ -31,12 +31,24 @@ doorspread=chrons$doorspread,
 windspeed = chrons$windspeed,
 surtemp=chrons$surtemp,
 bottemp=chrons$bottemp,
-datim.shoot=chrons$datim.shot,datim.haul=chrons$datim.haul)
+datim.shoot=chrons$datim.shot,datim.haul=chrons$datim.haul,
+stringsAsFactors = FALSE)
 
 
 short.length.frequencies <- length.frequencies[,-1]
+short.length.frequencies$country <- as.character(short.length.frequencies$country)
+short.length.frequencies$ship <- as.character(short.length.frequencies$ship)
+short.length.frequencies$gear <- as.character(short.length.frequencies$gear)
 
-merged.lfs  <- merge(short.chrons,short.length.frequencies,all=T)
+# Einar: do not get this to work
+#merged.lfs  <- base::merge(short.chrons,short.length.frequencies,
+#                           by.x = c("quarter", "country", "ship", "gear", "stno", "haulno", "year"),
+#                           by.y = c("quarter", "country", "ship", "gear", "stno", "haulno", "year"),
+#                           all=T)
+library(dplyr)
+merged.lfs <- short.length.frequencies  %>%
+  full_join(short.chrons)
+
 
 
 merged.lfs$scientific.name <- short.length.frequencies$scientific.name[1]

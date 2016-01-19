@@ -20,13 +20,13 @@ for(i in 1:length(fnames)){
 cnts<-count.fields(fnames[i],sep=",")
 chrons<-readLines(fnames[i])
 chrons<-cbind(chrons,cnts)
-chrons<-chrons[chrons[,2]=="61",][,-2]
+chrons<-chrons[chrons[,2]=="59",][,-2]
 print(length(chrons))
 if(i == 1){hds<-chrons[1]}
 out<-c(out,chrons[-1])
 }
 
-chrons <- data.frame(matrix(unlist(strsplit(out,",")),byrow=T,ncol=61))
+chrons <- data.frame(matrix(unlist(strsplit(out,",")),byrow=T,ncol=59))
 
 dimnames(chrons)[[2]] <- tolower(strsplit(hds,",")[[1]])
 
@@ -43,7 +43,14 @@ mm[grep("  ",mm)] <- "00"
 mm <- gsub(" ","0",mm)
 ttime<-paste(paste(hh,mm,sep=":"),":","00",sep="")
 
-
+chrons$recordtype <- as.character(chrons$recordtype)
+#chrons$survey <- as.character(chrons$survey)
+chrons$country <- as.character(chrons$country)
+chrons$ship <- as.character(chrons$ship)
+chrons$gear <- as.character(chrons$gear)
+chrons$haulval <- as.character(chrons$haulval)
+chrons$hydrostno <- as.character(chrons$hydrostno)
+#chrons$dateofcalculation <- as.character(chrons$dateofcalculation)
 chrons$quarter <- as.numeric(as.character(chrons$quarter))
 chrons$sweeplngt <- as.numeric(as.character(chrons$sweeplngt))
 chrons$haulno <- as.numeric(as.character(chrons$haulno))
@@ -102,7 +109,7 @@ chrons$datim.haul<-chrons$datim.shot + chrons$hauldur *60   #Default is seconds
 for ( i in c(8,9,10,11,12,13,14,18,19,20,21,23,28:59) )
 { chrons[,i] <- ifelse(chrons[,i]== -9, NA, chrons[,i]) }
 
-print(str(chrons))
+#print(str(chrons))
 
 
 chrons

@@ -24,18 +24,21 @@ lf<-readLines(fnames[i])
 lf<-cbind(lf,cnts)
 lf<-lf[lf[,2]=="24",][,-2]
 print(length(lf))
+if(i == 1){hds<-lf[1]}
 out<-c(out,lf[-1])
 }
 
 ### Write data out and read it back in (temporarily) ###
 write(t(out),file="lfs")
-lf<-read.table("lfs",sep=",")
-gc(reset=T)
+lf<-read.table("lfs",sep=",", stringsAsFactors = FALSE)
+#gc(reset=T)
 
-system(command="del lfs")
-dimnames(lf)[[2]] <- c("recordtype","quarter","country","ship","gear","sweeplngt","gearexp","doortype",
-"stno","haulno","year","speccodetype","speccode","specval","sex","totalno","catidentifier","nomeas","subfactor","subwgt","ascatcatchwgt",
-"lngtcode","lngtclass","hlnoatlngt")
+system("rm lfs")
+#dimnames(lf)[[2]] <- c("recordtype","quarter","country","ship","gear","sweeplngt","gearexp","doortype",
+#"stno","haulno","year","speccodetype","speccode","specval","sex","totalno","catidentifier","nomeas","subfactor","subwgt","ascatcatchwgt",
+#"lngtcode","lngtclass","hlnoatlngt")
+names(lf) <- tolower(strsplit(hds,",")[[1]])
+
 
 lf$quarter <- as.numeric(as.character(lf$quarter))
 lf$sweeplngt <- as.numeric(as.character(lf$sweeplngt))
@@ -57,7 +60,7 @@ lf$lngtcode <-as.character(lf$lngtcode)
 lf$lngtclass <- as.numeric(as.character(lf$lngtclass))
 lf$hlnoatlngt <- as.numeric(as.character(lf$hlnoatlngt))
 
-print(str(lf))
+#print(str(lf))
 lf
 
 }
