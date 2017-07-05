@@ -16,7 +16,7 @@ plotMapBlobs <- function(input=cpue.dat,what.quarter=3,what.year = 2010,what.cpu
 plot(1,1,type='n', xlim=xlim0,ylim=ylim0,xlab='',ylab='')
 title(paste(what.year," Q",what.quarter," ",input$scientific.name[1],sep=''))
 
-map("worldHires", add=TRUE, col='darkseagreen', fill=TRUE, bg="white",
+maps::map("worldHires", add=TRUE, col='darkseagreen', fill=TRUE, bg="white",
 regions=c('uk','ireland','france','germany','netherlands', 'norway','belgium',
 'spain','luxembourg','denmark', 'sweden','iceland', 'portugal','italy','sicily','ussr','sardinia','albania','monaco','turkey','austria',
 'switzerland','czechoslovakia','finland','libya', 'hungary','yugoslavia','poland','greece','romania','bulgaria', 'slovakia','morocco',

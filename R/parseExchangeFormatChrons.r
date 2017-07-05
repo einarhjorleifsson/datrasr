@@ -8,6 +8,7 @@
 #' @export
 parseExchangeFormatChrons <- function (wd =  "D:/bearedo/Database/DATRAS/NS-IBTS")  {
 
+  oldwd <- getwd()
 setwd(wd)
 
 fnames<-list.files()
@@ -20,13 +21,13 @@ for(i in 1:length(fnames)){
 cnts<-count.fields(fnames[i],sep=",")
 chrons<-readLines(fnames[i])
 chrons<-cbind(chrons,cnts)
-chrons<-chrons[chrons[,2]=="59",][,-2]
+chrons<-chrons[chrons[,2]=="61",][,-2]  # think more recent version have only 59 here
 print(length(chrons))
 if(i == 1){hds<-chrons[1]}
 out<-c(out,chrons[-1])
 }
 
-chrons <- data.frame(matrix(unlist(strsplit(out,",")),byrow=T,ncol=59))
+chrons <- data.frame(matrix(unlist(strsplit(out,",")),byrow=T,ncol=61))  # think more recent version have only 59 here
 
 dimnames(chrons)[[2]] <- tolower(strsplit(hds,",")[[1]])
 
@@ -111,7 +112,7 @@ for ( i in c(8,9,10,11,12,13,14,18,19,20,21,23,28:59) )
 
 #print(str(chrons))
 
-
+setwd(oldwd)
 chrons
 
 }
