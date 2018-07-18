@@ -4,9 +4,8 @@
 \alias{plot.Lfs}
 \title{XXX}
 \usage{
-plot.Lfs(fish = merged.dab, what.quarter = "3", chrons1 = chrons)
+plot.Lfs(fish = merged.dab, what.quarter = 1, chrons1 = chrons)
 }
 \description{
 XXX
 }
-

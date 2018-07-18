@@ -9,4 +9,3 @@ Chrons2SpatialPointsDF(data = chrons)
 \description{
 XXX
 }
-

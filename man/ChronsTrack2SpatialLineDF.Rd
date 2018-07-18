@@ -9,4 +9,3 @@ ChronsTrack2SpatialLineDF(input = chrons, what.ships = c("SCO3", "DAN2"))
 \description{
 XXX
 }
-

@@ -10,4 +10,3 @@ plot.PDensity(fish = merged.plaice, what.quarter = "3", chrons1 = chrons,
 \description{
 XXX
 }
-

@@ -9,4 +9,3 @@ ICESrectangle2LonLat(statsq, midpoint = F)
 \description{
 XXX
 }
-

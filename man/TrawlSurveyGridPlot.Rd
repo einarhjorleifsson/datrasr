@@ -16,4 +16,3 @@ TrawlSurveyGridPlot(dF, nameLon = "Longitude", nameLat = "Latitude",
 \description{
 XXX
 }
-

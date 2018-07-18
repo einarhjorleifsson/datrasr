@@ -9,4 +9,3 @@ qtrend.f(year, quarter, start.year = 1958)
 \description{
 XXX
 }
-

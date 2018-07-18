@@ -9,4 +9,3 @@ ICESarea(chrons, roman = F)
 \description{
 XXX
 }
-

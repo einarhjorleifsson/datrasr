@@ -11,4 +11,3 @@ NosatAgebyYearStatSquare(lfdat = merged.haddock, alk = alk,
 \description{
 XXX
 }
-

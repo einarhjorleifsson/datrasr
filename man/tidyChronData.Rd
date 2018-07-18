@@ -9,4 +9,3 @@ tidyChronData(input = chrons)
 \description{
 XXX
 }
-

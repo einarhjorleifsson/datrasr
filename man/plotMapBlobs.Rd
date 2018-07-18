@@ -11,4 +11,3 @@ plotMapBlobs(input = cpue.dat, what.quarter = 3, what.year = 2010,
 \description{
 XXX
 }
-

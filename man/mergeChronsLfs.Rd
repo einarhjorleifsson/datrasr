@@ -9,4 +9,3 @@ mergeChronsLfs(chrons = chrons, length.frequencies = spurdog)
 \description{
 XXX
 }
-

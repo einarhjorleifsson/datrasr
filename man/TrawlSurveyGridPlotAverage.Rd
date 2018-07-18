@@ -16,4 +16,3 @@ TrawlSurveyGridPlotAverage(dF, nameLon = "Longitude", nameLat = "Latitude",
 \description{
 XXX
 }
-

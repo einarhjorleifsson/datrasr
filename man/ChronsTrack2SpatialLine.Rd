@@ -9,4 +9,3 @@ ChronsTrack2SpatialLine(input = nchrons, which.tow = 1)
 \description{
 XXX
 }
-

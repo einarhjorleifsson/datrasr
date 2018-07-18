@@ -9,4 +9,3 @@ ICESrectangle(dF, nameLon = "shootlong", nameLat = "shootlat")
 \description{
 XXX
 }
-

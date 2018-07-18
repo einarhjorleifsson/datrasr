@@ -15,4 +15,3 @@ mapGrid(sGDF, sPDF, we = "", ea = "", so = "", no = "",
 \description{
 XXX
 }
-

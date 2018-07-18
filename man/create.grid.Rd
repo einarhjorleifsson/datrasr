@@ -10,4 +10,3 @@ create.grid(lon.range, lat.range, lon.n, lat.n, lon.obs, lat.obs,
 \description{
 XXX
 }
-

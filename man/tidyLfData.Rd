@@ -9,4 +9,3 @@ tidyLfData(input = lfs)
 \description{
 XXX
 }
-

@@ -10,4 +10,3 @@ NosatAgebyYearLonLat(lfdat = merged.haddock, alk = alk, chrons = chrons,
 \description{
 XXX
 }
-

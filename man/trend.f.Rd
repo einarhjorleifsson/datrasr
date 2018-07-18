@@ -9,4 +9,3 @@ trend.f(year, month, start.year = 1958)
 \description{
 XXX
 }
-
