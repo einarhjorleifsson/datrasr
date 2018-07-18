@@ -10,6 +10,7 @@ parseExchangeFormatLFs <- function (wd =  "D:/bearedo/Database/DATRAS/NS-IBTS") 
 
 #wd <- "D:/bearedo/Consultancy/TrawlSurveyCourseCopenhagen2011/Practicals/BTS-TRIDENS-1987-2010"
 
+  oldwd <- getwd()
 setwd(wd)
 
 fnames<-list.files()
@@ -22,7 +23,7 @@ for(i in 1:length(fnames)){
 cnts<-count.fields(fnames[i],sep=",")
 lf<-readLines(fnames[i])
 lf<-cbind(lf,cnts)
-lf<-lf[lf[,2]=="24",][,-2]
+lf<-lf[lf[,2]=="26",][,-2] # think in the most recent datras exchange these are 24
 print(length(lf))
 if(i == 1){hds<-lf[1]}
 out<-c(out,lf[-1])
@@ -61,6 +62,7 @@ lf$lngtclass <- as.numeric(as.character(lf$lngtclass))
 lf$hlnoatlngt <- as.numeric(as.character(lf$hlnoatlngt))
 
 #print(str(lf))
+setwd(oldwd)
 lf
 
 }

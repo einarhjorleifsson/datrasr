@@ -7,6 +7,8 @@
 #' @export
 parseExchangeFormatALKs <- function (wd =  "D:/bearedo/Database/DATRAS/NS-IBTS")  {
 
+  oldwd <- getwd()
+
  setwd(wd)
 
 fnames<-list.files()
@@ -20,20 +22,20 @@ for(i in 1:length(fnames)){
 cnts<-count.fields(fnames[i],sep=",")
 alk<-readLines(fnames[i])
 alk<-cbind(alk,cnts)
-alk<-alk[alk[,2]=="23",][,-2]
+header <- alk[alk[,2] == 25,][1,-2]
+alk<-alk[alk[,2]=="25",][,-2]  # think in the latest exchange these are 23
 print(length(alk))
 out<-c(out,alk[-1])
 }
 
-alk <- data.frame(matrix(unlist(strsplit(out,",")),byrow=T,ncol=23))
-
-dimnames(alk)[[2]] <-c("recordtype","quarter","country","ship","gear","sweeplngt","gearexp","doortype","stno","haulno",
-"year","speccodetype","speccode","areatype","areacode","lngtcode","lngtclass","sex","maturity","plusgr","age","noatalk","indwgt")
+header <- tolower(strsplit(header, ",")$alk)
+alk <- data.frame(matrix(unlist(strsplit(out,",")),byrow=T,ncol=length(header)))
+dimnames(alk)[[2]] <- header
 
 alk$quarter <- as.numeric(as.character(alk$quarter))
 alk$sweeplngt <- as.numeric(as.character(alk$sweeplngt))
 alk$haulno <- as.numeric(as.character(alk$haulno))
- alk$stno <- as.numeric(as.character(alk$stno))
+ alk$stno <- as.numeric(as.character(alk$stno)) # NA's sometimes created by coercion
  alk$year <- as.numeric(as.character(alk$year))
 
 alk$speccodetype <-as.character(alk$speccodetype)
@@ -51,6 +53,8 @@ alk$speccodetype <-ifelse(alk$speccodetype=='TRUE','t',alk$speccodetype)
 
 
 print(str(alk))
+
+setwd(oldwd)
 
 alk
 
